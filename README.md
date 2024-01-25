@@ -1,0 +1,4 @@
+# dictum
+
+inspirational quotes.
+
