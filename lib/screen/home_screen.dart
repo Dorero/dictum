@@ -216,7 +216,7 @@ class _LoadQuotesState extends State<LoadQuotes> {
     return FutureBuilder(
       future: model.initialLoadQuotes(),
       builder: (BuildContext context,
-          AsyncSnapshot<(List<Quote>, Quote, Map<String, int>)> snapshot) {
+          AsyncSnapshot<(List<Quote>, Map<String, int>)> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
@@ -235,8 +235,8 @@ class _LoadQuotesState extends State<LoadQuotes> {
           );
         } else if (snapshot.hasData) {
           final record = snapshot.data!;
-          final Map<String, int> stats = record.$3;
           model.quotes = record.$1;
+          final Map<String, int> stats = record.$2;
 
           return Padding(
             padding:
