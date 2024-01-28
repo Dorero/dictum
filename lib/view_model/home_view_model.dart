@@ -13,11 +13,9 @@ class HomeViewModel extends ChangeNotifier {
   final StatsRepository statsRepository = StatsRepositoryRest();
   final scrollController = ScrollController();
 
-
   List<Quote> quotes = [];
   int offset = LocaleStorage.prefs.getInt("quotesOffset") ?? 0;
   final int limit = 20;
-
 
   void setupScrollControllerHandler() {
     scrollController.addListener(_scrollControllerHandler);
@@ -26,7 +24,6 @@ class HomeViewModel extends ChangeNotifier {
   void _scrollControllerHandler() {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
-
       offset += limit;
       LocaleStorage.prefs.setInt("quotesOffset", offset);
       quotesRepository.byLanguage(limit, offset).then((response) {
@@ -36,19 +33,13 @@ class HomeViewModel extends ChangeNotifier {
     }
   }
 
-
-
-  Future<(List<Quote>, Quote, Map<String, int>)> initialLoadQuotes() async {
+  Future<(List<Quote>, Map<String, int>)> initialLoadQuotes() async {
     setupScrollControllerHandler();
-    final (quotes, quote, stats) = await (
+    return await (
       quotesRepository.byLanguage(limit, offset),
-      quotesRepository.random(),
       statsRepository.byLanguage()
     ).wait;
-    quotes.removeWhere((element) => element.id == quote.id);
-    return (quotes, quote, stats);
   }
-
 
   @override
   void dispose() {
