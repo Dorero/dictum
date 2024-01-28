@@ -11,16 +11,22 @@ import 'package:flutter/material.dart';
 class HomeViewModel extends ChangeNotifier {
   final QuoteRepository quotesRepository = QuoteRepositoryRest();
   final StatsRepository statsRepository = StatsRepositoryRest();
-  final pageController = PageController();
+  final scrollController = ScrollController();
 
 
   List<Quote> quotes = [];
   int offset = LocaleStorage.prefs.getInt("quotesOffset") ?? 0;
   final int limit = 20;
-  bool isPageChanged = LocaleStorage.prefs.getBool("isPageChanged") ?? false;
 
-  void pageChanged(int index) {
-    if (index == quotes.length - 1) {
+
+  void setupScrollControllerHandler() {
+    scrollController.addListener(_scrollControllerHandler);
+  }
+
+  void _scrollControllerHandler() {
+    if (scrollController.position.pixels ==
+        scrollController.position.maxScrollExtent) {
+
       offset += limit;
       LocaleStorage.prefs.setInt("quotesOffset", offset);
       quotesRepository.byLanguage(limit, offset).then((response) {
@@ -28,15 +34,12 @@ class HomeViewModel extends ChangeNotifier {
         notifyListeners();
       });
     }
-
-    if (!isPageChanged) {
-      isPageChanged = true;
-      LocaleStorage.prefs.setBool("isPageChanged", true);
-      notifyListeners();
-    }
   }
 
+
+
   Future<(List<Quote>, Quote, Map<String, int>)> initialLoadQuotes() async {
+    setupScrollControllerHandler();
     final (quotes, quote, stats) = await (
       quotesRepository.byLanguage(limit, offset),
       quotesRepository.random(),
@@ -49,7 +52,8 @@ class HomeViewModel extends ChangeNotifier {
 
   @override
   void dispose() {
-    pageController.dispose();
+    scrollController.removeListener(_scrollControllerHandler);
+    scrollController.dispose();
     super.dispose();
   }
 }

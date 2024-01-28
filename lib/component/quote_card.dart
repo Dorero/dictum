@@ -36,8 +36,12 @@ class QuoteCard extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                             color: Colors.blue),
                       ),
-                      onPressed: () => context.push('/author/${quote.author.id}',
+                      onPressed: () => context.push(
+                          '/author/${quote.author.id}',
                           extra: quote.author.name),
+                    ),
+                    SizedBox(
+                      height: 10,
                     ),
                   ],
                 ),
@@ -53,8 +57,8 @@ class QuoteCard extends StatelessWidget {
               initialEntries: [
                 OverlayEntry(
                   builder: (context) => Positioned(
-                    bottom: 20,
-                    right: 20,
+                    bottom: 0,
+                    right: 0,
                     child: Consumer<BookmarkViewModel>(
                       builder: (_, model, child) {
                         final quoteString = quote.toString();
