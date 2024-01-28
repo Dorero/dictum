@@ -17,6 +17,7 @@ class HomeViewModel extends ChangeNotifier {
   int offset = LocaleStorage.prefs.getInt("quotesOffset") ?? 0;
   final int limit = 20;
 
+
   void setupScrollControllerHandler() {
     scrollController.addListener(_scrollControllerHandler);
   }
@@ -24,6 +25,7 @@ class HomeViewModel extends ChangeNotifier {
   void _scrollControllerHandler() {
     if (scrollController.position.pixels ==
         scrollController.position.maxScrollExtent) {
+
       offset += limit;
       LocaleStorage.prefs.setInt("quotesOffset", offset);
       quotesRepository.byLanguage(limit, offset).then((response) {
@@ -32,6 +34,7 @@ class HomeViewModel extends ChangeNotifier {
       });
     }
   }
+
 
   Future<(List<Quote>, Map<String, int>)> initialLoadQuotes() async {
     setupScrollControllerHandler();
