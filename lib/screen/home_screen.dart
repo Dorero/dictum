@@ -286,21 +286,6 @@ class _LoadQuotesState extends State<LoadQuotes> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Text(
-                      AppLocalizations.of(context)!.random_quote,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    QuoteCard(quote: record.$2),
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text(
                       AppLocalizations.of(context)!.get_inspired,
                       textAlign: TextAlign.center,
                       style: const TextStyle(
@@ -309,26 +294,19 @@ class _LoadQuotesState extends State<LoadQuotes> {
                     const SizedBox(
                       height: 20,
                     ),
-                    Stack(
-                      children: [
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height / 4,
-                          child: Consumer<HomeViewModel>(
-                            builder: (_, model, child) {
-                              return PageView.builder(
-                                onPageChanged: (index) =>
-                                    model.pageChanged(index),
-                                controller: model.pageController,
-                                itemCount: model.quotes.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return QuoteCard(quote: model.quotes[index]);
-                                },
-                              );
+                    Consumer<HomeViewModel>(
+                      builder: (_, model, child) {
+                        return SizedBox(
+                          height: MediaQuery.of(context).size.height / 1.8,
+                          child: ListView.builder(
+                            controller: model.scrollController,
+                            itemCount: model.quotes.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return QuoteCard(quote: model.quotes[index]);
                             },
                           ),
-                        ),
-                        const _OverlayArrow(),
-                      ],
+                        );
+                      },
                     ),
                   ],
                 ),
@@ -339,80 +317,6 @@ class _LoadQuotesState extends State<LoadQuotes> {
           return Center(child: Text(AppLocalizations.of(context)!.no_quotes));
         }
       },
-    );
-  }
-}
-
-class _OverlayArrow extends StatelessWidget {
-  const _OverlayArrow();
-
-  @override
-  Widget build(BuildContext context) {
-    return Selector<HomeViewModel, bool>(
-      selector: (context, model) => model.isPageChanged,
-      builder: (_, isPageChanged, child) {
-        return isPageChanged
-            ? const SizedBox.shrink()
-            : Positioned(
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                child: Overlay(
-                  initialEntries: [
-                    OverlayEntry(
-                      builder: (context) => const Positioned(
-                        top: 0,
-                        bottom: 0,
-                        right: 0,
-                        child: ArrowAnimation(),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-      },
-    );
-  }
-}
-
-class ArrowAnimation extends StatefulWidget {
-  const ArrowAnimation({
-    super.key,
-  });
-
-  @override
-  State<ArrowAnimation> createState() => _ArrowAnimationState();
-}
-
-class _ArrowAnimationState extends State<ArrowAnimation>
-    with TickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    _controller = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: this,
-    )..repeat(reverse: true);
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _controller,
-      child: const Icon(
-        Icons.arrow_forward_ios,
-        size: 60,
-        color: Colors.black,
-      ),
     );
   }
 }
